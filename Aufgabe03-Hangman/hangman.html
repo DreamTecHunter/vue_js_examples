@@ -15,7 +15,7 @@ loading data from wordlist
 <body>
 <h1>Hangman</h1>
 <div id="app">
-
+<button v-for="letters in letters">{{letter}}</button>
 
 </div>
 </body>
@@ -29,7 +29,12 @@ createApp({
     },
     methods:
         {
-
+            wrong(){
+                letters = letters.filter(x => x !== letter)
+            },
+            right(){
+                letters
+            }
         }
 })
 async function getWordlist(){
@@ -37,4 +42,8 @@ async function getWordlist(){
     const data = await response.json()
     return data;
 }
+// create array of chars
+letters: Array.from(Array(26)).map((e,i) => String.fromCharCode(i+56))
+
+
 </script>
