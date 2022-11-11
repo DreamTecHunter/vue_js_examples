@@ -37,8 +37,10 @@ loading data from wordlist
             {
                 wrong() {
                     console.log(number);
-                    number++;
-                    this.img = "./hangman/" + number + ".jpg"
+                    if (number < 10) {
+                        number++;
+                        this.img = "./hangman/" + number + ".jpg"
+                    }
                     console.log(this.img)
                 },
                 right() {
