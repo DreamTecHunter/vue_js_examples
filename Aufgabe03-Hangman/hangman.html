@@ -4,7 +4,7 @@
 <!--
 loading data from wordlist
 -->
-<script src="wordlist.json"/>
+<!--<script src="wordlist.json"/>-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,26 +15,41 @@ loading data from wordlist
 <body>
 <h1>Hangman</h1>
 <div id="app">
-
+    <img v-bind:src="img">
+    </br>
+    <button @click="wrong">hy</button>
+    <input>
 
 </div>
 </body>
 </html>
 
 <script>
-const {createApp} = Vue
-createApp({
-    data(){
+    let number = 0;
+    const {createApp} = Vue
+    createApp({
+        data() {
+            return {
+                img: "./hangman/0.jpg"
+            }
+        },
+        methods:
+            {
+                wrong() {
+                    console.log(number);
+                    number++;
+                    this.img = "./hangman/" + number + ".jpg"
+                    console.log(this.img)
+                },
+                right() {
 
-    },
-    methods:
-        {
+                }
+            }
+    }).mount('#app')
 
-        }
-})
-async function getWordlist(){
-    const response = await fetch('wordlist.json')
-    const data = await response.json()
-    return data;
-}
+    async function getWordlist() {
+        const response = await fetch('wordlist.json')
+        const data = await response.json()
+        return data;
+    }
 </script>
