@@ -49,10 +49,8 @@ async function getWordlist(){
 // create array of chars
 letters: Array.from(Array(26)).map((e,i) => String.fromCharCode(i+56))
 function timer(){
-    let time = 0;
     setInterval(function(){
-        time++;
-        document.getElementById("timer").innerHTML = time;
+        document.getElementById("timer").innerHTML = new Date().toLocaleString();
     }, 1000);
 }
 /*function checkFilesystem() {
