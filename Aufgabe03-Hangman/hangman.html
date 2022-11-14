@@ -15,8 +15,13 @@ loading data from wordlist
 <body>
 <h1>Hangman</h1>
 <div id="app">
+    <button @click="restart">restart</button>
+    <br>
+    <h3>{{ message }}</h3>
+    <h5>Remaining tries: {{tries}}</h5>
+    <br>
     <img v-bind:src="img">
-    </br>
+    <br>
     <button @click="wrong">hy</button>
     <input>
 
@@ -26,25 +31,36 @@ loading data from wordlist
 
 <script>
     let number = 0;
+    let pictureNumbers = 10;
+    let chooseLetterMessage = "Please choose a Letter.";
+    let choseTheSameLetterMessage = "Don't chose the same letter.";
+    let word;
     const {createApp} = Vue
     createApp({
         data() {
             return {
-                img: "./hangman/0.jpg"
+                img: "./hangman/0.jpg",
+                message: chooseLetterMessage,
+                tries: pictureNumbers,
             }
         },
         methods:
             {
+                restart() {
+                },
                 wrong() {
-                    console.log(number);
-                    if (number < 10) {
+                    if (number < pictureNumbers) {
                         number++;
-                        this.img = "./hangman/" + number + ".jpg"
+                        this.tries--;
+                        this.img = "./hangman/" + number + ".jpg";
+
                     }
-                    console.log(this.img)
+                    if (number == pictureNumbers){
+                        this.message = "You lost. The word is: "+word;
+                    }
                 },
                 right() {
-
+                    this.message = "You found the word "+ word;
                 }
             }
     }).mount('#app')
