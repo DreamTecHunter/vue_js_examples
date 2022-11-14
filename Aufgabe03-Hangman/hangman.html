@@ -55,18 +55,16 @@ function timer(){
         document.getElementById("timer").innerHTML = time;
     }, 1000);
 }
-function checkFilesystem() {
+/*function checkFilesystem() {
     var fs = require('fs');
     var dir = './hangman/data';
 
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }
+}*/
+
+function setToLocalStorage(data){
+    localStorage.setItem('wordlist', JSON.stringify(data))
 }
-
-function toJSON(data){
-    return JSON.stringify(data)
-}
-
-
 </script>
