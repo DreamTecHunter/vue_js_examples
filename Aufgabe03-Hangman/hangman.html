@@ -15,6 +15,10 @@ loading data from wordlist
 <body>
 <h1>Hangman</h1>
 <div id="app">
+    <h3>Guess the word:</h3>
+    
+    <p>You needed {{time}}s to complete the word.</p>
+    
 <button v-for="letter in letters">{{letter}}</button>
 
 </div>
@@ -44,6 +48,12 @@ async function getWordlist(){
 }
 // create array of chars
 letters: Array.from(Array(26)).map((e,i) => String.fromCharCode(i+56))
-
+function timer(){
+    let time = 0;
+    setInterval(function(){
+        time++;
+        document.getElementById("timer").innerHTML = time;
+    }, 1000);
+}
 
 </script>
