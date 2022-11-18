@@ -1,73 +1,164 @@
 <script src="https://unpkg.com/vue@3"></script>
 <script src="https://unpkg.com/vue-select@latest"></script>
 <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
-<!--
-loading data from wordlist
--->
-<!--<script src="wordlist.json"/>-->
+<script src="wordlist.js"></script>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Hangman</title>
+
+    <style>
+        #message_area {
+            float: left;
+            width: 33%;
+        }
+
+        #input_area {
+            float: left;
+            width: 33%;
+        }
+
+        #result_area {
+            float: left;
+            width: 33%;
+        }
+    </style>
 </head>
 <body>
 <h1>Hangman</h1>
 <div id="app">
-    <button @click="restart">restart</button>
-    <br>
-    <h3>{{ message }}</h3>
-    <h5>Remaining tries: {{tries}}</h5>
-    <br>
-    <img v-bind:src="img">
-    <br>
-    <button @click="wrong">hy</button>
-    <input>
+    <div id="message_area">
+        <h2>Message</h2>
+        <h3>{{ message }}</h3>
+    </div>
+    <div id="input_area">
+        <h2>Input</h2>
+        <div id="button_container"></div>
+        <button @click="restart()">restart</button>
+    </div>
+    <div id="result_area">
+        <h2>Results</h2>
+        <h3>Remaining tries: {{tries}}</h3>
+        <h4>{{word}}</h4>
+        <img v-bind:src="img">
+    </div>
 
 </div>
 </body>
 </html>
 
+<!---->
 <script>
-    let number = 0;
+    initLetters();
+    const initMessage = "Please click the restart-button to start."
+    const resetMessage = "Click the restart-button to restart."
+    const chooseLetterMessage = "Please choose a Letter.";
+    const choseTheSameLetterMessage = "Don't choose the same letter.";
     let pictureNumbers = 10;
-    let chooseLetterMessage = "Please choose a Letter.";
-    let choseTheSameLetterMessage = "Don't chose the same letter.";
-    let word;
+
+    function initLetters() {
+        let html = '';
+        let letter;
+        for (let i = 0; i < 26; i++) {
+            letter = String.fromCharCode(i + 65)
+            let temp = '<button id=\"' + letter + '\" @click="setLetter(\'' + letter + '\')">' + letter + '</button>';
+            if ((i + 1) % 10 == 0)
+                temp += "<br>"
+            html += temp;
+        }
+        document.getElementById("button_container").innerHTML = html;
+    }
+
     const {createApp} = Vue
     createApp({
         data() {
             return {
                 img: "./hangman/0.jpg",
-                message: chooseLetterMessage,
+                message: initMessage,
                 tries: pictureNumbers,
+                words: words,
+                chosenWord: "",
+                word: "_",
+                wordArray: [],
+                knowingAmount: 0,
+                number: 0
             }
         },
         methods:
             {
                 restart() {
+                    this.chosenWord = words[parseInt(Math.random() * this.words.length)]
+                    this.chosenWordArray = this.chosenWord.split("")
+                    this.message = this.chosenWord;
+                    this.wordArray = new Array(this.chosenWordArray.length)
+                    this.word = ""
+                    for (let i = 0; i < this.wordArray.length; i++)
+                        this.wordArray[i] = i == 0 ? this.chosenWordArray[0] : "_";
+                    this.reprintWord();
+                    this.reactivateButtons();
+                    this.tries = pictureNumbers;
+                    this.img = "./hangman/0.jpg";
+                    this.number = 0;
+                },
+                check() {
+                    if (this.wordArray.length == this.wordArray.filter(x => {
+                        return x != "_"
+                    }).length)
+                        this.right();
                 },
                 wrong() {
-                    if (number < pictureNumbers) {
-                        number++;
+                    if (this.number < pictureNumbers) {
+                        console.log(this.number);
+                        console.log(this.tries);
+                        this.number++;
                         this.tries--;
-                        this.img = "./hangman/" + number + ".jpg";
-
+                        this.img = "./hangman/" + this.number + ".jpg";
                     }
-                    if (number == pictureNumbers){
-                        this.message = "You lost. The word is: "+word;
+                    if (this.number == pictureNumbers) {
+                        this.message = "You lost. The word is: " + this.chosenWord;
+                        this.deactivateButtons();
                     }
                 },
                 right() {
-                    this.message = "You found the word "+ word;
+                    this.message = "You found the word: " + this.chosenWord;
+                },
+                reactivateButtons() {
+                    for (let i = 0; i < 26; i++) {
+                        let letter = String.fromCharCode(i + 65)
+                        document.getElementById(letter).disabled = "";
+                    }
+                },
+                deactivateButtons() {
+                    for (let i = 0; i < 26; i++) {
+                        let letter = String.fromCharCode(i + 65)
+                        document.getElementById(letter).disabled = "true";
+                    }
+                },
+                setLetter(letter) {
+                    if (this.chosenWordArray == undefined)
+                        return
+                    document.getElementById(letter).disabled = "true";
+                    let wrong = true;
+                    for (let i = 0; i < this.chosenWordArray.length; i++) {
+                        if (letter.toLowerCase() == this.chosenWordArray[i]) {
+                            this.wordArray[i] = this.chosenWordArray[i]
+                            wrong = false;
+                        }
+
+                    }
+                    if (wrong)
+                        this.wrong();
+                    this.reprintWord();
+                    this.check();
+                },
+                reprintWord() {
+                    this.word = "";
+                    for (let i = 0; i < this.wordArray.length; i++)
+                        this.word += this.wordArray[i] + " "
                 }
             }
     }).mount('#app')
 
-    async function getWordlist() {
-        const response = await fetch('wordlist.json')
-        const data = await response.json()
-        return data;
-    }
 </script>
